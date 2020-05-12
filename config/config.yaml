@@ -1,0 +1,14 @@
+input_rgb: data/demo_rgb.png
+input_mask: data/demo_mask.png
+
+marrnet1_file: weights/marrnet1.pt
+net_file: weights/shapehd.pt
+
+optim: adam
+adam_beta1: 0.5
+adam_beta2: 0.9
+lr: 1e-4
+w_gan_loss: 0.
+
+post_opt: True
+init_dist: 1.04
