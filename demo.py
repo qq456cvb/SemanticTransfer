@@ -245,7 +245,7 @@ def main(opt):
         with torch.no_grad():
             pcd_embeddings = predictor(torch.from_numpy(pcd[None]).float())[0].cpu().numpy()  # pretrained model is unnormalized
             
-        target_embeddings = np.array([embeddings[i] for i in range(15)])
+        target_embeddings = np.array([embeddings[i] for i in range(21)])
         
         dists = np.linalg.norm(target_embeddings[:, None, :] - pcd_embeddings[None], axis=-1)
         kps_pred = pcd[np.argmin(dists, axis=1)]

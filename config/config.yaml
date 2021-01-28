@@ -1,5 +1,6 @@
 input_rgb: data/demo_rgb.png
 input_mask: data/demo_mask.png
+data_path: data/h5files
 
 marrnet1_file: weights/marrnet1.pt
 net_file: weights/shapehd.pt
@@ -12,3 +13,13 @@ w_gan_loss: 0.
 
 post_opt: True
 init_dist: 1.04
+
+data:
+  annot_path: kpnet/annotations/all.json
+  pcd_root: kpnet/pcds
+
+class_name: chair
+emb_dims: 256
+batch_size: 32
+num_workers: 6
+max_epoch: 100

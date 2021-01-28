@@ -1,3 +1,6 @@
 .vscode
 outputs
 __pycache__
+weights
+!weights/embeddings_norm.pt
+kpnet
