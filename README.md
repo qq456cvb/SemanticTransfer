@@ -1,5 +1,5 @@
 # SemanticTransfer
-Code repo for the paper \hrefSemantic Correspondence via 2D-3D-2D Cycle"
+Code repo for the paper [Semantic Correspondence via 2D-3D-2D Cycle](https://arxiv.org/abs/2004.09061).
 
 # Demo
 Please run `demo.py`.
