@@ -1,6 +1,15 @@
 # SemanticTransfer
 Code repo for the paper [Semantic Correspondence via 2D-3D-2D Cycle](https://arxiv.org/abs/2004.09061).
 
+<!-- README refined by Cursor -->
+
+## Data and Artifact Mirrors
+
+No verified Hugging Face mirror is available yet for the artifacts below; use the original sources until a complete mirror is uploaded.
+
+Original, external, or pending sources:
+- Pretrained weights: [https://drive.google.com/drive/folders/1VN4dIrMqtIxb0CJleOx7aco21BUSL9qp?usp=sharing](https://drive.google.com/drive/folders/1VN4dIrMqtIxb0CJleOx7aco21BUSL9qp?usp=sharing). Hugging Face mirror is pending because the source did not expose a retrievable public file URL during this cleanup.
+
 # Demo
 Please run `demo.py`.
 
