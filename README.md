@@ -1,26 +1,55 @@
-# SemanticTransfer
-Code repo for the paper [Semantic Correspondence via 2D-3D-2D Cycle](https://arxiv.org/abs/2004.09061).
+# Semantic Correspondence via 2D-3D-2D Cycle
 
-<!-- README refined by Cursor -->
+[![arXiv](https://img.shields.io/badge/arXiv-2004.09061-b31b1b.svg)](https://arxiv.org/abs/2004.09061)
+[![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models-yellow)](https://huggingface.co/qq456cvb/SemanticTransfer)
 
-## Data and Artifact Mirrors
+Official implementation of [Semantic Correspondence via 2D-3D-2D Cycle](https://arxiv.org/abs/2004.09061).
 
-No verified Hugging Face mirror is available yet for the artifacts below; use the original sources until a complete mirror is uploaded.
+Instead of training correspondences directly in 2D, this method lifts the problem to 3D: a single-view image is reconstructed into a 3D shape (via 2.5D sketches), its viewpoint is estimated, dense 3D semantic embeddings are predicted, and keypoint labels are transferred from the [KeypointNet](https://github.com/qq456cvb/KeypointNet) dataset through 3D retrieval before being projected back into the image. Reasoning in 3D lets the model handle self-occlusion and visibility explicitly.
 
-Original, external, or pending sources:
-- Pretrained weights: [https://drive.google.com/drive/folders/1VN4dIrMqtIxb0CJleOx7aco21BUSL9qp?usp=sharing](https://drive.google.com/drive/folders/1VN4dIrMqtIxb0CJleOx7aco21BUSL9qp?usp=sharing). Hugging Face mirror is pending because the source did not expose a retrievable public file URL during this cleanup.
+## Pipeline
 
-# Demo
-Please run `demo.py`.
+1. **2.5D sketch estimation** (`models/marrnet1.py`) — depth, normals, and silhouette from a masked RGB image
+2. **3D shape completion** (`models/shapehd.py`) — voxel shape from the 2.5D sketches ([ShapeHD](https://github.com/xiumingzhang/GenRe-ShapeHD))
+3. **Viewpoint estimation** (`models/viewpoint.py`) — azimuth/elevation of the input view
+4. **Dense 3D embeddings** (`models/dense_embedding.py`) — per-point semantic embeddings matched against KeypointNet keypoint embeddings (`data/embeddings_kpnet_norm.pkl`), then rendered back to 2D
 
-# Pretrained Weights
-You can download them from [Google Drive](https://drive.google.com/drive/folders/1VN4dIrMqtIxb0CJleOx7aco21BUSL9qp?usp=sharing).
+## Pretrained Weights
 
-# Training
+Download the checkpoints from [Hugging Face](https://huggingface.co/qq456cvb/SemanticTransfer) into the `weights/` folder:
 
-Training the full pipeline is somewhat involved and complicated, and our code is heavily based on [ShapeHD](https://github.com/xiumingzhang/GenRe-ShapeHD). In general, there are four steps:
+```bash
+hf download qq456cvb/SemanticTransfer marrnet1.pt shapehd.pt best.pt --local-dir weights
+```
 
-- Train ShapeHD model as outlined [here](https://github.com/xiumingzhang/GenRe-ShapeHD#shapehd-1).
-- Prepare synthetic ShapeNet model renderings by ``mitsuba`` and generate their corresponding viewpoints through ``preprocess.py``.
-- Train viewpoint estimation network by running ``scripts/train_vp.sh``.
-- Train 3D embedding prediction network by running ``train_embs.py`` and then generate keypoints' average embeddings for retrieval. This step requires [KeypointNet](https://github.com/qq456cvb/KeypointNet) dataset.
+(`weights/embeddings_norm.pt` is already included in the repository.)
+
+Google Drive mirror: [link](https://drive.google.com/drive/folders/1VN4dIrMqtIxb0CJleOx7aco21BUSL9qp?usp=sharing).
+
+## Demo
+
+```bash
+python demo.py
+```
+
+Runs the full pipeline on the bundled example (`data/demo_rgb.png` + `data/demo_mask.png`) and visualizes the transferred keypoints. Requires PyTorch, [neural_renderer](https://github.com/daniilidis-group/neural_renderer), hydra, scikit-image, and OpenCV.
+
+## Training
+
+Training the full pipeline is somewhat involved, and our code is heavily based on [ShapeHD](https://github.com/xiumingzhang/GenRe-ShapeHD). In general, there are four steps:
+
+1. Train the ShapeHD model as outlined [here](https://github.com/xiumingzhang/GenRe-ShapeHD#shapehd-1).
+2. Prepare synthetic ShapeNet model renderings with `mitsuba` and generate their corresponding viewpoints through `preprocess.py`.
+3. Train the viewpoint estimation network with `scripts/train_vp.sh`.
+4. Train the 3D embedding prediction network with `train_emb.py`, then generate the keypoints' average embeddings for retrieval. This step requires the [KeypointNet](https://github.com/qq456cvb/KeypointNet) dataset.
+
+## Citation
+
+```bibtex
+@article{you2020semantic,
+  title={Semantic Correspondence via 2D-3D-2D Cycle},
+  author={You, Yang and Li, Chengkun and Lou, Yujing and Cheng, Zhoujun and Ma, Lizhuang and Lu, Cewu and Wang, Weiming},
+  journal={arXiv preprint arXiv:2004.09061},
+  year={2020}
+}
+```
